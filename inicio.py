@@ -3,7 +3,7 @@ import json
 import ast
 from datetime import datetime
 import pygame as pg
-from pygame.constants import KEYDOWN, K_0, K_1, K_KP_ENTER, K_KP_PLUS, K_LEFT, K_RIGHT, QUIT
+from pygame.constants import KEYDOWN, K_0, K_1, K_KP_ENTER, K_KP_PLUS, K_LEFT, K_RETURN, K_RIGHT, QUIT
 
 class Computer():
     def __init__(self):
@@ -324,7 +324,7 @@ class Game:
             color_right = (0,128,0)
         
         # Mostrando informações atuais
-        text_comands = [ "Jogo: " + str(self.game),"Rodada: " + str(self.round) ,"Resto: " + str(len(self.rest)), "'0' = Left", "'1' = Right", "'< / >' = Alterna as peças"]
+        text_comands = [ "Jogo: " + str(self.game),"Rodada: " + str(self.round) ,"Resto: " + str(len(self.rest)), "'1' = Left", "'0' = Right", "'< / >' = Alterna as peças"]
         position = 25
         for text in text_comands:
             text = font.render(text, True, (255,255,255))
@@ -689,7 +689,7 @@ class Game:
                                     elif event.key == K_1:
                                         self.edge = 'Left'
                                         self.update()
-                                    elif event.key == K_KP_ENTER:
+                                    elif event.key == K_KP_ENTER or event.key == K_RETURN:
                                         piece_edge = [self.player2.hand[self.selected], self.edge]
                                         if piece_edge[1] == 'Right':
                                             if piece_edge[0][0] == self.right_controller[0]:
