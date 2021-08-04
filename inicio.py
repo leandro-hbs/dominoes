@@ -1,6 +1,7 @@
 import random
 import json
 import ast
+from datetime import datetime
 import pygame as pg
 from pygame.constants import KEYDOWN, K_0, K_1, K_KP_ENTER, K_KP_PLUS, K_LEFT, K_RIGHT, QUIT
 
@@ -792,9 +793,9 @@ class Game:
 game = Game()
 data = []
 while True:
-    if game.hand1 == 5:
+    if game.hand1 == 14:
         break
-    if game.hand2 == 5:
+    if game.hand2 == 14:
         break
     game.play()
     jogo = {
@@ -803,8 +804,8 @@ while True:
         'Rodadas': ast.literal_eval(game.info[:-1])
     }
     data.append(jogo)
-    print(data)
-arquivo = open("jogo.txt","a")
+name = datetime.utcnow().strftime('%Y_%m_%d_%H_%M_%S_%f')[:-3]
+arquivo = open(name + '.json',"a")
 jogo = json.dumps(data)
 arquivo.write(jogo)
 arquivo.close()
