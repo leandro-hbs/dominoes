@@ -34,9 +34,15 @@ class Computer():
                 
     def can_play(self, left, right):
         for piece in self.hand:
-            if piece[0] == left[0] or piece[1] == left[0] or piece[1] == right[0] or piece[1] == right[0]:
+            if piece[0] == left[0] or piece[1] == left[0] or piece[0] == right[0] or piece[1] == right[0]:
                 return True
         return False
+    
+    def big_hand(self):
+        value = 0
+        for piece in self.hand:
+            value += piece[0] + piece[1]
+        return value
     
     def select_piece_to_play(self, left, right):
         for piece in self.hand:
@@ -77,9 +83,15 @@ class Human():
     def add_to_hand(self, piece):
         self.hand.append(piece)
                 
+    def big_hand(self):
+        value = 0
+        for piece in self.hand:
+            value += piece[0] + piece[1]
+        return value
+
     def can_play(self, left, right):
         for piece in self.hand:
-            if piece[0] == left[0] or piece[1] == left[0] or piece[1] == right[0] or piece[1] == right[0]:
+            if piece[0] == left[0] or piece[1] == left[0] or piece[0] == right[0] or piece[1] == right[0]:
                 return True
         return False
 
@@ -324,7 +336,7 @@ class Game:
             color_right = (0,128,0)
         
         # Mostrando informações atuais
-        text_comands = [ "Jogo: " + str(self.game),"Rodada: " + str(self.round) ,"Resto: " + str(len(self.rest)), "'1' = Left", "'0' = Right", "'< / >' = Alterna as peças"]
+        text_comands = [ "Jogo: " + str(self.game),"Rodada: " + str(self.round) ,"Resto: " + str(len(self.rest)),'Player 1: ' + str(self.hand1) + ' pieces','Player 2: ' + str(self.hand2) + ' pieces', "'1' = Left", "'0' = Right", "'< / >' = Alterna as peças"]
         position = 25
         for text in text_comands:
             text = font.render(text, True, (255,255,255))
@@ -619,15 +631,16 @@ class Game:
             'Turno': self.round,
             'Campo': self.field,
             'Player1': self.player1.hand,
-            'Player2': self.player2.hand
+            'Player2': self.player2.hand,
+            'Bordas': [self.left_controller[0], self.right_controller[0]]
         }        
 
     def play(self):
+        self.info = ''
         self.create_screen()
         self.set_variables()
         self.start()
         self.update()
-        self.info = ''
         while self.running:
             self.info += str(self.data()) + ','
             if len(self.player1.hand) == 0:
@@ -649,12 +662,13 @@ class Game:
                         if len(self.rest) > 0:
                             self.player1.add_to_hand(self.rest[0])
                             del self.rest[0]
+                            self.update()
                         else:
                             if self.player2.can_play(self.left_controller, self.right_controller):
                                 # Adicionar o round
                                 self.round += 1
                             else:
-                                if len(self.player1.hand) > len(self.player2.hand):
+                                if self.player1.big_hand() > self.player2.big_hand():
                                     self.winner = 2
                                     self.game += 1
                                     self.hand1 += 1
@@ -665,7 +679,7 @@ class Game:
                                     self.game += 1
                                     self.running = False
 
-                if (self.round + self.first_play) % 2 == 1:
+                elif (self.round + self.first_play) % 2 == 1:
                     my_turn = True
                     if self.player2.can_play(self.left_controller, self.right_controller):
                         # Adicionar o round
@@ -787,19 +801,31 @@ class Game:
                             del self.rest[0]
                             self.update()
                         else:
-                            # Adicionar o round
-                            self.round += 1
+                            if self.player1.can_play(self.left_controller, self.right_controller):
+                                # Adicionar o round
+                                self.round += 1
+                            else:
+                                if self.player1.big_hand() > self.player2.big_hand():
+                                    self.winner = 2
+                                    self.game += 1
+                                    self.hand1 += 1
+                                    self.running = False
+                                else:
+                                    self.winner = 1
+                                    self.hand2 += 1
+                                    self.game += 1
+                                    self.running = False
                                              
 game = Game()
 data = []
 while True:
-    if game.hand1 == 14:
+    if game.hand1 == 5:
         break
-    if game.hand2 == 14:
+    if game.hand2 == 5:
         break
     game.play()
     jogo = {
-        'Jogo': game.game,
+        'Jogo': game.game-1,
         'Resultado': game.winner,
         'Rodadas': ast.literal_eval(game.info[:-1])
     }
