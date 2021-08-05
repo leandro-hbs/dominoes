@@ -629,10 +629,10 @@ class Game:
     def data(self):
         return {
             'Turno': self.round,
-            'Campo': self.field,
+            'Field': self.field,
             'Player1': self.player1.hand,
             'Player2': self.player2.hand,
-            'Bordas': [self.left_controller[0], self.right_controller[0]]
+            'Edges': [self.left_controller[0], self.right_controller[0]]
         }        
 
     def play(self):
@@ -819,9 +819,9 @@ class Game:
 game = Game()
 data = []
 while True:
-    if game.hand1 == 5:
+    if game.hand1 == 14:
         break
-    if game.hand2 == 5:
+    if game.hand2 == 14:
         break
     game.play()
     jogo = {
