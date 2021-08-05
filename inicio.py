@@ -503,7 +503,7 @@ class Game:
                     # Ajustar a proxima posição e direção
                     self.adjust_right_position()
                     
-                elif piece_edge[1] == 1:
+                elif piece_edge[1] == 'Left':
                     # Ajustar a peça para encaixar
                     if self.left_controller[0] == piece_edge[0][0]:
                         # Selecionar a rotação da peça
