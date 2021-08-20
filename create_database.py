@@ -70,6 +70,7 @@ for file in onlyfiles:
     for linha in data:
         data = linha
     data = json.loads(data)
+    print(data)
     games = len(data)
     for game in range(games):
         rodadas = len(data[game]['Rodadas'])
