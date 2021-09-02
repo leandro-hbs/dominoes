@@ -1,5 +1,7 @@
 class Player():
     def __init__(self):
+        # Nome
+        self.name = "Human"
         # Peças na mão
         self.hand = []
         # Número inicial de peças na mão
@@ -57,16 +59,3 @@ class Player():
                 value = p[0] + p[1]
                 piece = p
         return piece
-    
-    # Retorna a primeira peça que pode ser jogada 
-    def select_piece_to_play(self, left, right):
-        for piece in self.hand:
-            if piece[0] == left[0]:
-                # Peça e borda
-                return [piece, 'Left']
-            if piece[1] == left[0]:
-                return [piece, 'Left']
-            if piece[0] == right[0]: 
-                return [piece, 'Right']
-            if piece[1] == right[0]:
-                return [piece, 'Right']
