@@ -6,8 +6,6 @@ import json
 class Random(Player):
     def __init__(self):
         super().__init__()
-
-        # Definindo o nome
         self.name = "Random"
     
     def select_piece_to_play(self, left, right):
@@ -25,15 +23,10 @@ class Random(Player):
 class H1(Player):
     def __init__(self):
         super().__init__()
-
-        # Definindo o nome
         self.name = "H1"
 
     def select_piece_to_play(self, left, right):
-        # Jogadas válidas
         valid_plays = []
-
-        # Quantidade de peças de cada número
         backups = [0,0,0,0,0,0,0]
 
         # Peça com mais backup, quantidade de backup da peça, soma dos valores da peça, lado para jogar
@@ -79,15 +72,10 @@ class H1(Player):
 class H2(Player):
     def __init__(self):
         super().__init__()
-
-        # Definindo o nome
         self.name = "H2"
 
     def select_piece_to_play(self, left, right, field, height, width):
-        # Jogadas válidas
         valid_plays = []
-
-        # Quantidade de peças de cada número
         backups = [0,0,0,0,0,0,0]
 
         # Peça com mais backup, quantidade de backup da peça, soma dos valores da peça, lado para jogar
@@ -134,7 +122,7 @@ class H2(Player):
                     biggest = [valid_plays[j][0], backup, better, valid_plays[j][1]]
             return [biggest[0], biggest[3]]
     
-        # Se não retorne a única peça válida e o lado pra jogar 
+        # Se não, retorne a única peça válida e o lado pra jogar 
         else:
             return [valid_plays[0][0], valid_plays[0][1]]
 
@@ -142,9 +130,8 @@ class KNN(Player):
 
     def __init__(self):
         super().__init__()
-
-        # Definindo o nome
         self.name = "K-NN"
+        self.k = 10
 
         # Buscando informações do banco de dados
         data = open('database.json', 'r') 
@@ -152,10 +139,7 @@ class KNN(Player):
             data = line
         data = json.loads(data)
         self.database = data
-
-        # Definindo o K
-        self.k = 10
-
+        
     # Converte as informações recebidas no formato do vetor desejado
     def converter(self, field, temporary_hand, oponent_hand, edges):
 
@@ -201,8 +185,6 @@ class KNN(Player):
         return data
     
     def win_rate(self, array):
-
-        # Vetor que contém as distâncias para os vizinhos e seus rótulos
         distances = []
 
         # Calculando a distância entre o vetor de estado e todos os dados de estado encontrados
@@ -226,13 +208,8 @@ class KNN(Player):
         return win_rate
 
     def select_piece_to_play(self, left, right, field, opponent_hand):
-        # Jogadas válidas
         valid_plays = []
-
-        # Mão temporária para calculo de estado
         temporary_hand = []
-
-        # Peças temporárias para calculo de estado
         temporary_plays = []
 
         # Verificando possiveis jogadas
