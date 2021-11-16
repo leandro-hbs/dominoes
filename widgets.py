@@ -14,6 +14,21 @@ class Button:
         else:
             self.color = (255,255,255)
 
+class Option:
+    def __init__(self, x, y, height, width):
+        self.color = (255,255,255)
+        self.height = height
+        self.width = width
+        self.rect = pg.Rect(x, y, 55, 20)
+        self.pos = (x+5, y+5)
+    
+    # Verifica se a posição do mouse toca a área do botão
+    def verify(self, pos):
+        if self.rect.collidepoint(pos):
+            self.color = (0,128,0)
+        else:
+            self.color = (255,255,255)
+
 class Images:
     def __init__(self):
         self.zero = pg.image.load('images\\zero.png')
@@ -33,39 +48,20 @@ class Images:
 
     # Retorna a imagem correspondente a peça recebida
     def load_piece(self, piece):
-        image_piece = []
-        
-        if piece[0] == 0: 
-            image_piece.append(self.zero)
-        elif piece[0] == 1:
-            image_piece.append(self.one)
-        elif piece[0] == 2:
-            image_piece.append(self.two)
-        elif piece[0] == 3:
-            image_piece.append(self.three)
-        elif piece[0] == 4:
-            image_piece.append(self.four)
-        elif piece[0] == 5:
-            image_piece.append(self.five)
-        elif piece[0] == 6:
-            image_piece.append(self.six)
-        
-        if piece[1] == 0:
-            image_piece.append(self.zero)
-        elif piece[1] == 1:
-            image_piece.append(self.one)
-        elif piece[1] == 2:
-            image_piece.append(self.two)
-        elif piece[1] == 3:
-            image_piece.append(self.three)
-        elif piece[1] == 4:
-            image_piece.append(self.four)
-        elif piece[1] == 5:
-            image_piece.append(self.five)
-        elif piece[1] == 6:
-            image_piece.append(self.six)
-        
-        return image_piece
+        if piece == 0: 
+            return self.zero
+        elif piece == 1:
+            return self.one
+        elif piece == 2:
+            return self.two
+        elif piece == 3:
+            return self.three
+        elif piece == 4:
+            return self.four
+        elif piece == 5:
+            return self.five
+        elif piece == 6:
+            return self.six
 
 class Piece:
     def __init__(self, x, y, piece):
@@ -87,13 +83,23 @@ class Controller:
             self.edge = piece[1]
         if piece[1] == self.edge:
             self.edge = piece[0]
-    
-    def ajust(self):
-        if self.direction == 'right':
-            if self.x + 60 < 640:
-                self.x += 60
-                self.rect = pg.Rect(self.x, self.y, 30, 30)
-        if self.direction == 'left':
-            if self.x - 60 > 0:
-                self.x -= 60
-                self.rect = pg.Rect(self.x, self.y, 30, 30)
+        
+    def ajust(self, cart):
+        if cart:
+            if self.direction == 'right':
+                if self.x + 30 < 640:
+                    self.x += 30
+                    self.rect = pg.Rect(self.x, self.y, 30, 30)
+            if self.direction == 'left':
+                if self.x - 30 > 0:
+                    self.x -= 30
+                    self.rect = pg.Rect(self.x, self.y, 30, 30)
+        else:
+            if self.direction == 'right':
+                if self.x + 60 < 640:
+                    self.x += 60
+                    self.rect = pg.Rect(self.x, self.y, 30, 30)
+            if self.direction == 'left':
+                if self.x - 60 > 0:
+                    self.x -= 60
+                    self.rect = pg.Rect(self.x, self.y, 30, 30)
