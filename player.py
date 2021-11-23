@@ -33,3 +33,15 @@ class Player():
         for piece in self.hand:
             value += piece[0] + piece[1]
         return value
+
+    def select_piece_to_play(self, left, right):
+        # Retorna a primeira peça que pode ser jogada e a borda a ser jogada
+        for piece in self.hand:
+            if piece[0] == left:
+                return [piece, 'Left']
+            if piece[1] == left:
+                return [piece, 'Left']
+            if piece[0] == right: 
+                return [piece, 'Right']
+            if piece[1] == right:
+                return [piece, 'Right']

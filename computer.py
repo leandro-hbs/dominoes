@@ -3,23 +3,6 @@ from operator import itemgetter
 import numpy as np
 import json
 
-class Random(Player):
-    def __init__(self):
-        super().__init__()
-        self.name = "Random"
-    
-    def select_piece_to_play(self, left, right):
-        # Retorna a primeira peça que pode ser jogada e a borda a ser jogada
-        for piece in self.hand:
-            if piece[0] == left[0]:
-                return [piece, 'Left']
-            if piece[1] == left[0]:
-                return [piece, 'Left']
-            if piece[0] == right[0]: 
-                return [piece, 'Right']
-            if piece[1] == right[0]:
-                return [piece, 'Right']
-
 class H1(Player):
     def __init__(self):
         super().__init__()
