@@ -17,7 +17,6 @@ class Game:
         self.clock = pg.time.Clock()
         self.page = 1
         self.result = "Venceu"
-        self.rest = pg.Rect(560, 400, 60, 60)
         self.conf = pg.Rect(575, 30, 20, 20)
         self.show_resolutions = False
         self.resolutions = []
@@ -40,7 +39,9 @@ class Game:
 
         # Tamanho da tela
         self.height = 480
+        self.offset_y = 0
         self.width = 640
+        self.offset_x = 0
 
         # Criando a tela e Adicionando título e icone
         self.screen = pg.display.set_mode((self.width, self.height))
@@ -54,12 +55,15 @@ class Game:
     def load_interface(self):
 
         # Posição de referência
-        y = 400
-        x = 150
+        y = self.height
+        x = self.width
 
         # Desenhando o nome do jogador
         self.screen.blit(self.font.render(
-            self.player1.name, True, self.white), (x-100, y+20))
+            self.player1.name, True, self.white), (x/25, y-(y/10)))
+
+        x = x/25+80
+        y = y-(y/10)-20
 
         # Limpa a lista de peças clicavéis
         self.clickable_pieces = []
@@ -79,12 +83,15 @@ class Game:
             x += 40
 
         # Posição de referência
-        y = 20
-        x = 150
+        y = self.height
+        x = self.width
 
-        # Desenhando "Escolha o oponente"
+        # Desenhando o nome do oponente
         self.screen.blit(self.font.render(
-            self.player2.name, True, self.white), (x-100, y+20))
+            self.player2.name, True, self.white), (x/25, (y/15)))
+
+        x = x/25+80
+        y = (y/15)-20
 
         # Carregando a mão do oponente
         for _ in range(len(self.player2.hand)):
@@ -100,34 +107,48 @@ class Game:
         # Mostrando o resto
         image = self.images.load_piece(0)
 
+        # Posição de referência
+        y = self.height
+        x = self.width
+
         # Desenhando "Resto"
         self.screen.blit(self.font.render(
-            "Resto", True, self.white), (560, 375))
+            str(len(self.domino.rest)), True, self.white), ((x*0.9)+5,(y*0.9)+5))
+        self.rest = pg.Rect((x*0.9),(y*0.9), 35, 30)
+        pg.draw.rect(self.screen, self.white, self.rest, 2)
 
-        # Desenha a peça
-        self.screen.blit(image, (560, 400))
-        self.screen.blit(image, (590, 400))
-        self.screen.blit(image, (560, 430))
-        self.screen.blit(image, (590, 430))
+        # Posição de referência
+        y = self.height*0.05
+        x = self.width*0.9
+        
+        # Criando botões de resolução
+        self.resolutions = []
+        self.resolutions.append(Option(x-10, y+40, 480, 640))
+        self.resolutions.append(Option(x-10, y+70, 800, 800))
+        self.resolutions.append(Option(x-10, y+100, 800, 1280))
+
+        self.conf = pg.Rect(x, y, 30, 30)
 
         # Mostrando botão de configuração
         if self.show_resolutions:
             self.screen.blit(self.font.render(
-                "-", True, self.white), (580, 30))
+                "-", True, self.white), (x+10,y+10))
             pg.draw.rect(self.screen, self.white, self.conf, 2)
             for res in self.resolutions:
                 pg.draw.rect(self.screen, res.color, res.rect, 2)
                 self.screen.blit(self.min_font.render(
-                    str(res.height)+'x'+str(res.width), True, res.color), res.pos)
+                    str(res.width)+'x'+str(res.height), True, res.color), res.pos)
                 res.verify(self.mouse)
                 if res.rect.collidepoint(self.mouse):
                     if pg.mouse.get_pressed()[0] == 1:
-                        self.screen = pg.display.set_mode(
-                            (res.height, res.width))
+                        self.offset_x = (res.width - self.width)/2
+                        self.offset_y = (res.height - self.height)/2
+                        self.height = res.height
+                        self.width = res.width
 
         else:
             self.screen.blit(self.font.render(
-                "+", True, self.white), (580, 30))
+                "*", True, self.white), (x+10,y+10))
             pg.draw.rect(self.screen, self.white, self.conf, 2)
 
     def load_field(self):
@@ -135,7 +156,7 @@ class Game:
             # Coleta as informações da peça e sua posição
             image = self.images.load_piece(piece_position[0])
             position = piece_position[1]
-            self.screen.blit(image, (position[0], position[1]))
+            self.screen.blit(image, (position[0]+self.offset_x, position[1]+self.offset_y))
 
     # Cria a primeira tela
     def first_screen(self):
@@ -194,8 +215,8 @@ class Game:
         self.screen.fill(self.black)
 
         # Posição de referência
-        self.second_screen_x = 320
-        self.second_screen_y = 255
+        self.second_screen_x = self.width/2
+        self.second_screen_y = self.height/2
 
         # Organizando o inicio do jogo
         self.domino.set_variables()
@@ -240,15 +261,13 @@ class Game:
             self.right_controller = Controller(
                 piece[1], self.second_screen_x+60, self.second_screen_y, 'right')
 
-        # Criando botões de resolução
-        self.resolutions.append(Option(560, 70, 640, 480))
-        self.resolutions.append(Option(560, 100, 800, 800))
-        self.resolutions.append(Option(560, 130, 1280, 800))
-
         while True:
 
             # 30 FPS
             self.clock.tick(30)
+
+            # Ajustando resolução da tela
+            self.screen = pg.display.set_mode((self.width, self.height))
 
             # Preenchendo background
             self.screen.fill(self.black)
