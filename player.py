@@ -23,7 +23,7 @@ class Player():
     # Verifica se pode jogar
     def can_play(self, left, right):
         for piece in self.hand:
-            if piece[0] == left[0] or piece[1] == left[0] or piece[0] == right[0] or piece[1] == right[0]:
+            if piece[0] == left or piece[1] == left or piece[0] == right or piece[1] == right:
                 return True
         return False
 
