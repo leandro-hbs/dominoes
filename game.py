@@ -300,10 +300,13 @@ class Game:
                                 self.player1.remove_from_hand(piece.piece)
 
                     # Verifica se vai pegar do resto
-                    if self.rest.collidepoint(self.mouse):
-                        pg.draw.rect(self.screen, (0, 128, 0), self.rest, 2)
-                        if pg.mouse.get_pressed()[0] == 1:
-                            self.player1.add_to_hand(self.domino.rest.pop())
+                    if self.player1.can_play(self.left_controller.edge, self.right_controller.edge):
+                        pass
+                    else:
+                        if self.rest.collidepoint(self.mouse):
+                            pg.draw.rect(self.screen, (0, 128, 0), self.rest, 2)
+                            if pg.mouse.get_pressed()[0] == 1:
+                                self.player1.add_to_hand(self.domino.rest.pop())
 
                     # Verifica se vai mudar resolução
                     if self.conf.collidepoint(self.mouse):
@@ -312,7 +315,6 @@ class Game:
                             self.show_resolutions = not self.show_resolutions
 
                 # Verificando onde a peça vai ser colocada
-
                 if pg.mouse.get_pressed()[0] == 1:
                     # Verifica se a peça foi colocada na direita
                     if self.right_controller.rect.collidepoint(self.mouse):

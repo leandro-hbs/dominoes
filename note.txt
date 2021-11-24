@@ -1,4 +1,3 @@
-# Validar se é possivel jogar pra bloquear a função de pegar peça do resto
 # Validar se a peça clicada é possível de ser jogada
 # Colocar uma key para soltar a peça da mão
 # Ajustar para jogar com outros oponentes além do Random
