@@ -39,9 +39,9 @@ class Game:
 
         # Tamanho da tela
         self.height = 480
-        self.offset_y = 0
+        self.offset = [[0, 0], [100, 100], [300, 100]]
+        self.index = 0
         self.width = 640
-        self.offset_x = 0
 
         # Criando a tela e Adicionando título e icone
         self.screen = pg.display.set_mode((self.width, self.height))
@@ -141,8 +141,9 @@ class Game:
                 res.verify(self.mouse)
                 if res.rect.collidepoint(self.mouse):
                     if pg.mouse.get_pressed()[0] == 1:
-                        self.offset_x = (res.width - self.width)/2
-                        self.offset_y = (res.height - self.height)/2
+                        self.index = self.resolutions.index(res)
+                        self.left_controller.update_rect(self.offset[self.index])
+                        self.right_controller.update_rect(self.offset[self.index])
                         self.height = res.height
                         self.width = res.width
 
@@ -156,7 +157,7 @@ class Game:
             # Coleta as informações da peça e sua posição
             image = self.images.load_piece(piece_position[0])
             position = piece_position[1]
-            self.screen.blit(image, (position[0]+self.offset_x, position[1]+self.offset_y))
+            self.screen.blit(image, (position[0]+self.offset[self.index][0], position[1]+self.offset[self.index][1]))
 
     # Cria a primeira tela
     def first_screen(self):
@@ -344,8 +345,10 @@ class Game:
                         # Ajusta a nova posição
                         if self.marked_piece[0] == self.marked_piece[1]:
                             self.right_controller.ajust(True)
+                            self.right_controller.update_rect(self.offset[self.index])
                         else:
                             self.right_controller.ajust(False)
+                            self.right_controller.update_rect(self.offset[self.index])
                         # Retirar peça da mão
                         self.marked_piece = []
                         self.my_turn = not self.my_turn
@@ -380,8 +383,10 @@ class Game:
                         # Ajusta a nova posição
                         if self.marked_piece[0] == self.marked_piece[1]:
                             self.left_controller.ajust(True)
+                            self.left_controller.update_rect(self.offset[self.index])
                         else:
                             self.left_controller.ajust(False)
+                            self.left_controller.update_rect(self.offset[self.index])
                         # Retirar peça da mão
                         self.marked_piece = []
                         self.my_turn = not self.my_turn
@@ -422,8 +427,10 @@ class Game:
                             # Ajusta a nova posição
                             if self.marked_piece[0] == self.marked_piece[1]:
                                 self.right_controller.ajust(True)
+                                self.right_controller.update_rect(self.offset[self.index])
                             else:
                                 self.right_controller.ajust(False)
+                                self.right_controller.update_rect(self.offset[self.index])
                             # Retirar peça da mão
                             self.marked_piece = []
                             self.my_turn = not self.my_turn
@@ -457,8 +464,10 @@ class Game:
                         # Ajusta a nova posição
                         if self.marked_piece[0] == self.marked_piece[1]:
                             self.left_controller.ajust(True)
+                            self.left_controller.update_rect(self.offset[self.index])
                         else:
                             self.left_controller.ajust(False)
+                            self.left_controller.update_rect(self.offset[self.index])
                         # Retirar peça da mão
                         self.marked_piece = []
                         self.my_turn = not self.my_turn

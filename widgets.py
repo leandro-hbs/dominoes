@@ -83,23 +83,22 @@ class Controller:
             self.edge = piece[1]
         if piece[1] == self.edge:
             self.edge = piece[0]
+    
+    def update_rect(self, offset):
+        self.rect = pg.Rect(self.x+offset[0], self.y+offset[1], 30, 30)
         
     def ajust(self, cart):
         if cart:
             if self.direction == 'right':
                 if self.x + 30 < 640:
                     self.x += 30
-                    self.rect = pg.Rect(self.x, self.y, 30, 30)
             if self.direction == 'left':
                 if self.x - 30 > 0:
                     self.x -= 30
-                    self.rect = pg.Rect(self.x, self.y, 30, 30)
         else:
             if self.direction == 'right':
                 if self.x + 60 < 640:
                     self.x += 60
-                    self.rect = pg.Rect(self.x, self.y, 30, 30)
             if self.direction == 'left':
                 if self.x - 60 > 0:
                     self.x -= 60
-                    self.rect = pg.Rect(self.x, self.y, 30, 30)

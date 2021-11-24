@@ -2,5 +2,4 @@
 # Validar se a peça clicada é possível de ser jogada
 # Colocar uma key para soltar a peça da mão
 # Ajustar para jogar com outros oponentes além do Random
-# Ajustar a posição do campo nas diferentes resoluções
 # Salvar os jogos em json
