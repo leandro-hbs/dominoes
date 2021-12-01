@@ -7,6 +7,7 @@ import pygame as pg
 from widgets import Button, Controller, Images, Option, Piece
 import random
 
+
 class Game:
     def __init__(self):
         pg.init()
@@ -113,14 +114,14 @@ class Game:
 
         # Desenhando "Resto"
         self.screen.blit(self.font.render(
-            str(len(self.domino.rest)), True, self.white), ((x*0.9)+5,(y*0.9)+5))
-        self.rest = pg.Rect((x*0.9),(y*0.9), 35, 30)
+            str(len(self.domino.rest)), True, self.white), ((x*0.9)+5, (y*0.9)+5))
+        self.rest = pg.Rect((x*0.9), (y*0.9), 35, 30)
         pg.draw.rect(self.screen, self.white, self.rest, 2)
 
         # Posição de referência
         y = self.height*0.05
         x = self.width*0.9
-        
+
         # Criando botões de resolução
         self.resolutions = []
         self.resolutions.append(Option(x-10, y+40, 480, 640))
@@ -132,7 +133,7 @@ class Game:
         # Mostrando botão de configuração
         if self.show_resolutions:
             self.screen.blit(self.font.render(
-                "-", True, self.white), (x+10,y+10))
+                "-", True, self.white), (x+10, y+10))
             pg.draw.rect(self.screen, self.white, self.conf, 2)
             for res in self.resolutions:
                 pg.draw.rect(self.screen, res.color, res.rect, 2)
@@ -142,14 +143,16 @@ class Game:
                 if res.rect.collidepoint(self.mouse):
                     if pg.mouse.get_pressed()[0] == 1:
                         self.index = self.resolutions.index(res)
-                        self.left_controller.update_rect(self.offset[self.index])
-                        self.right_controller.update_rect(self.offset[self.index])
+                        self.left_controller.update_rect(
+                            self.offset[self.index])
+                        self.right_controller.update_rect(
+                            self.offset[self.index])
                         self.height = res.height
                         self.width = res.width
 
         else:
             self.screen.blit(self.font.render(
-                "*", True, self.white), (x+10,y+10))
+                "*", True, self.white), (x+10, y+10))
             pg.draw.rect(self.screen, self.white, self.conf, 2)
 
     def load_field(self):
@@ -157,7 +160,8 @@ class Game:
             # Coleta as informações da peça e sua posição
             image = self.images.load_piece(piece_position[0])
             position = piece_position[1]
-            self.screen.blit(image, (position[0]+self.offset[self.index][0], position[1]+self.offset[self.index][1]))
+            self.screen.blit(
+                image, (position[0]+self.offset[self.index][0], position[1]+self.offset[self.index][1]))
 
     # Cria a primeira tela
     def first_screen(self):
@@ -232,12 +236,12 @@ class Game:
         # Se o jogador 1 começar
         if piece in self.player1.hand:
             self.player1.remove_from_hand(piece)
-            self.my_turn = False
+            self.my_turn = 2
 
         # Se o jogador 2 começar
         else:
             self.player2.remove_from_hand(piece)
-            self.my_turn = True
+            self.my_turn = 1
 
         if piece[0] == piece[1]:
             # Coloco a peça no meio da tela
@@ -258,9 +262,9 @@ class Game:
                 [piece[1], (self.second_screen_x-30, self.second_screen_y)])
             # Salvando os controladores // borda / posição central / top, left, bottom, right
             self.left_controller = Controller(
-                piece[0], self.second_screen_x-30, self.second_screen_y, 'left')
+                piece[1], self.second_screen_x-60, self.second_screen_y, 'left')
             self.right_controller = Controller(
-                piece[1], self.second_screen_x+60, self.second_screen_y, 'right')
+                piece[0], self.second_screen_x+30, self.second_screen_y, 'right')
 
         while True:
 
@@ -278,7 +282,7 @@ class Game:
             self.load_interface()
 
             # Se for turno do player
-            if self.my_turn:
+            if self.my_turn == 1:
                 # Armazenando a posição do mouse
                 self.mouse = pg.mouse.get_pos()
                 if len(self.marked_piece) != 0:
@@ -288,6 +292,9 @@ class Game:
                     self.screen.blit(
                         image0, (self.mouse[0]-15, self.mouse[1]-30))
                     self.screen.blit(image1, (self.mouse[0]-15, self.mouse[1]))
+                    if pg.mouse.get_pressed()[2] == 1:
+                        self.player1.add_to_hand(self.marked_piece)
+                        self.marked_piece = []
 
                 else:
                     # Verificando a posição do mouse
@@ -296,17 +303,20 @@ class Game:
                             pg.draw.rect(
                                 self.screen, (0, 128, 0), piece.rect, 2)
                             if pg.mouse.get_pressed()[0] == 1:
-                                self.marked_piece = piece.piece
-                                self.player1.remove_from_hand(piece.piece)
+                                if self.player1.can_play_this_piece(piece.piece, self.left_controller.edge, self.right_controller.edge):
+                                    self.marked_piece = piece.piece
+                                    self.player1.remove_from_hand(piece.piece)
 
                     # Verifica se vai pegar do resto
                     if self.player1.can_play(self.left_controller.edge, self.right_controller.edge):
                         pass
                     else:
                         if self.rest.collidepoint(self.mouse):
-                            pg.draw.rect(self.screen, (0, 128, 0), self.rest, 2)
+                            pg.draw.rect(
+                                self.screen, (0, 128, 0), self.rest, 2)
                             if pg.mouse.get_pressed()[0] == 1:
-                                self.player1.add_to_hand(self.domino.rest.pop())
+                                self.player1.add_to_hand(
+                                    self.domino.rest.pop())
 
                     # Verifica se vai mudar resolução
                     if self.conf.collidepoint(self.mouse):
@@ -321,42 +331,70 @@ class Game:
                         # Por a peça no campo
                         if self.marked_piece[0] == self.right_controller.edge:
                             self.right_controller.edge = self.marked_piece[1]
-                            if self.marked_piece[0] == self.marked_piece[1]:
-                                self.domino.field.append(
-                                    [self.marked_piece[0], (self.right_controller.x, self.right_controller.y+15)])
-                                self.domino.field.append(
-                                    [self.marked_piece[1], (self.right_controller.x, self.right_controller.y-15)])
-                            else:
-                                self.domino.field.append(
-                                    [self.marked_piece[0], (self.right_controller.x, self.right_controller.y)])
-                                self.domino.field.append(
-                                    [self.marked_piece[1], (self.right_controller.x+30, self.right_controller.y)])
+                            if self.right_controller.direction == 'right':
+                                if self.marked_piece[0] == self.marked_piece[1]:
+                                    self.domino.field.append(
+                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y+15)])
+                                    self.domino.field.append(
+                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y-15)])
+                                else:
+                                    self.domino.field.append(
+                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y)])
+                                    self.domino.field.append(
+                                        [self.marked_piece[1], (self.right_controller.x+30, self.right_controller.y)])
+                            if self.right_controller.direction == 'down':
+                                if self.marked_piece[0] == self.marked_piece[1]:
+                                    self.domino.field.append(
+                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y)])
+                                    self.domino.field.append(
+                                        [self.marked_piece[1], (self.right_controller.x+30, self.right_controller.y)])
+                                else:
+                                    self.domino.field.append(
+                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y+15)])
+                                    self.domino.field.append(
+                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y-15)])
                         else:
                             self.right_controller.edge = self.marked_piece[0]
-                            if self.marked_piece[0] == self.marked_piece[1]:
-                                self.domino.field.append(
-                                    [self.marked_piece[1], (self.right_controller.x, self.right_controller.y+15)])
-                                self.domino.field.append(
-                                    [self.marked_piece[0], (self.right_controller.x, self.right_controller.y-15)])
-                            else:
-                                self.domino.field.append(
-                                    [self.marked_piece[1], (self.right_controller.x, self.right_controller.y)])
-                                self.domino.field.append(
-                                    [self.marked_piece[0], (self.right_controller.x+30, self.right_controller.y)])
+                            if self.right_controller.direction == 'right':
+                                if self.marked_piece[0] == self.marked_piece[1]:
+                                    self.domino.field.append(
+                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y+15)])
+                                    self.domino.field.append(
+                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y-15)])
+                                else:
+                                    self.domino.field.append(
+                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y)])
+                                    self.domino.field.append(
+                                        [self.marked_piece[0], (self.right_controller.x+30, self.right_controller.y)])
+                            if self.right_controller.direction == 'down':
+                                if self.marked_piece[0] == self.marked_piece[1]:
+                                    self.domino.field.append(
+                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y)])
+                                    self.domino.field.append(
+                                        [self.marked_piece[1], (self.right_controller.x+30, self.right_controller.y)])
+                                else:
+                                    self.domino.field.append(
+                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y+15)])
+                                    self.domino.field.append(
+                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y-15)])
 
                         # Ajusta a nova posição
                         if self.marked_piece[0] == self.marked_piece[1]:
-                            self.right_controller.ajust(True)
-                            self.right_controller.update_rect(self.offset[self.index])
+                            self.right_controller.ajust(
+                                True)
+                            self.right_controller.update_rect(
+                                self.offset[self.index])
                         else:
-                            self.right_controller.ajust(False)
-                            self.right_controller.update_rect(self.offset[self.index])
+                            self.right_controller.ajust(
+                                False)
+                            self.right_controller.update_rect(
+                                self.offset[self.index])
                         # Retirar peça da mão
                         self.marked_piece = []
-                        self.my_turn = not self.my_turn
+                        self.my_turn = 2
 
                     # Verifica se a peça foi colocada na esquerda
-                    if self.left_controller.rect.collidepoint(self.mouse):
+                    elif self.left_controller.rect.collidepoint(self.mouse):
                         # Por a peça no campo
                         if self.marked_piece[0] == self.left_controller.edge:
                             self.left_controller.edge = self.marked_piece[1]
@@ -384,17 +422,21 @@ class Game:
                                     [self.marked_piece[0], (self.left_controller.x-30, self.left_controller.y)])
                         # Ajusta a nova posição
                         if self.marked_piece[0] == self.marked_piece[1]:
-                            self.left_controller.ajust(True)
-                            self.left_controller.update_rect(self.offset[self.index])
+                            self.left_controller.ajust(
+                                True)
+                            self.left_controller.update_rect(
+                                self.offset[self.index])
                         else:
-                            self.left_controller.ajust(False)
-                            self.left_controller.update_rect(self.offset[self.index])
+                            self.left_controller.ajust(
+                                False)
+                            self.left_controller.update_rect(
+                                self.offset[self.index])
                         # Retirar peça da mão
                         self.marked_piece = []
-                        self.my_turn = not self.my_turn
+                        self.my_turn = 2
 
             # Se for turno da máquina
-            else:
+            elif self.my_turn == 2:
                 # Se a máquina puder jogar
                 if self.player2.can_play(self.left_controller.edge, self.right_controller.edge):
                     (self.marked_piece, position) = self.player2.select_piece_to_play(
@@ -428,16 +470,20 @@ class Game:
 
                             # Ajusta a nova posição
                             if self.marked_piece[0] == self.marked_piece[1]:
-                                self.right_controller.ajust(True)
-                                self.right_controller.update_rect(self.offset[self.index])
+                                self.right_controller.ajust(
+                                    True)
+                                self.right_controller.update_rect(
+                                    self.offset[self.index])
                             else:
-                                self.right_controller.ajust(False)
-                                self.right_controller.update_rect(self.offset[self.index])
+                                self.right_controller.ajust(
+                                    False)
+                                self.right_controller.update_rect(
+                                    self.offset[self.index])
                             # Retirar peça da mão
                             self.marked_piece = []
-                            self.my_turn = not self.my_turn
+                            self.my_turn = 1 
 
-                    if position == 'Left':
+                    elif position == 'Left':
                         # Por a peça no campo
                         if self.marked_piece[0] == self.left_controller.edge:
                             self.left_controller.edge = self.marked_piece[1]
@@ -465,18 +511,32 @@ class Game:
                                     [self.marked_piece[0], (self.left_controller.x-30, self.left_controller.y)])
                         # Ajusta a nova posição
                         if self.marked_piece[0] == self.marked_piece[1]:
-                            self.left_controller.ajust(True)
-                            self.left_controller.update_rect(self.offset[self.index])
+                            self.left_controller.ajust(
+                                True)
+                            self.left_controller.update_rect(
+                                self.offset[self.index])
                         else:
-                            self.left_controller.ajust(False)
-                            self.left_controller.update_rect(self.offset[self.index])
+                            self.left_controller.ajust(
+                                False)
+                            self.left_controller.update_rect(
+                                self.offset[self.index])
                         # Retirar peça da mão
                         self.marked_piece = []
-                        self.my_turn = not self.my_turn
+                        self.my_turn = 1
 
                 # Se não, adiciona uma peça do resto
                 else:
                     self.player2.add_to_hand(self.domino.rest.pop())
+
+            # Verifica vencedor
+            if len(self.player1.hand) == 0:
+                self.result = "Venceu"
+                self.page = 3
+                return
+            if len(self.player2.hand) == 0:
+                self.result = "Perdeu"
+                self.page = 3
+                return
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -492,15 +552,15 @@ class Game:
         self.screen.fill(self.black)
 
         # Posição de referência
-        self.third_screen_y = 200
-        self.third_screen_x = 200
+        self.third_screen_y = self.height/2
+        self.third_screen_x = self.width/2
 
-        # Desenhando "Escolha o oponente"
+        # Desenhando se venceu ou perdeu
         self.screen.blit(self.font.render("Você " + self.result, True,
-                         self.white), (self.third_screen_y+60, self.third_screen_x-50))
+                         self.white), (self.third_screen_x-75, self.third_screen_y-150))
 
         # Criando botões
-        button = Button(self.third_screen_y, self.third_screen_x)
+        button = Button(self.third_screen_x-130, self.third_screen_y)
 
         while True:
 
@@ -530,3 +590,12 @@ class Game:
 
             # Atualizando a tela
             pg.display.update()
+
+    def reset(self):
+        self.domino = Domino()
+        self.player1 = Player()
+        self.player2 = Player()
+        self.page = 1
+        self.result = "Venceu"
+        self.show_resolutions = False
+        self.marked_piece = []

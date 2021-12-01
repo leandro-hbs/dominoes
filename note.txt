@@ -1,4 +1,5 @@
-# Validar se a peça clicada é possível de ser jogada
-# Colocar uma key para soltar a peça da mão
+# Ajustar o retorno para a tela do oponente
+# Ajustar resolução da terceira tela
+# Ajustar a modificação de direção
 # Ajustar para jogar com outros oponentes além do Random
 # Salvar os jogos em json

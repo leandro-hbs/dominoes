@@ -26,6 +26,12 @@ class Player():
             if piece[0] == left or piece[1] == left or piece[0] == right or piece[1] == right:
                 return True
         return False
+    
+    # Verifica se pode jogar
+    def can_play_this_piece(self, piece, left, right):
+        if piece[0] == left or piece[1] == left or piece[0] == right or piece[1] == right:
+            return True
+        return False
 
     # Retorna o somatório dos valores das peças na mão
     def big_hand(self):
