@@ -94,9 +94,10 @@ class Controller:
     def ajust(self, cart):
         if cart:
             if self.direction == 'right':
-                if self.x + 30 < 640:
+                if self.x + 30 < 600:
                     self.x += 30
                 else:
+                    self.y += 45
                     self.direction = 'down'
 
             if self.direction == 'left':
@@ -106,30 +107,33 @@ class Controller:
                     self.direction = 'up'
 
             if self.direction == 'up':
-                if self.y - 60 > 0:
-                    self.y -= 60
+                if self.y - 30 > 0:
+                    self.y -= 30
 
             if self.direction == 'down':
-                if self.y + 60 < 480:
-                    self.y += 60
+                if self.y + 30 < 400:
+                    self.y += 30
 
         else:
             if self.direction == 'right':
-                if self.x + 60 < 640:
+                if self.x + 60 < 600:
                     self.x += 60
                 else:
+                    self.x += 30
+                    self.y += 30
                     self.direction = 'down'
 
             if self.direction == 'left':
                 if self.x - 60 > 0:
                     self.x -= 60
                 else:
+                    self.x -= 30
                     self.direction = 'up'
 
             if self.direction == 'up':
-                if self.y - 30 > 0:
-                    self.y -= 30
+                if self.y - 60 > 0:
+                    self.y -= 60
 
             if self.direction == 'down':
-                if self.y + 30 < 480:
-                    self.y += 30
+                if self.y + 60 < 400:
+                    self.y += 60

@@ -1,5 +1,4 @@
-# Ajustar o retorno para a tela do oponente
+# Ajustar a jogada da máquina pra alinhar nas direções ajustadas
 # Ajustar resolução da terceira tela
-# Ajustar a modificação de direção
 # Ajustar para jogar com outros oponentes além do Random
 # Salvar os jogos em json

@@ -328,55 +328,41 @@ class Game:
                 if pg.mouse.get_pressed()[0] == 1:
                     # Verifica se a peça foi colocada na direita
                     if self.right_controller.rect.collidepoint(self.mouse):
-                        # Por a peça no campo
+                        # Pegar peça de encaixe e nova borda
                         if self.marked_piece[0] == self.right_controller.edge:
+                            connect_piece = self.marked_piece[0]
+                            border_piece = self.marked_piece[1]
                             self.right_controller.edge = self.marked_piece[1]
-                            if self.right_controller.direction == 'right':
-                                if self.marked_piece[0] == self.marked_piece[1]:
-                                    self.domino.field.append(
-                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y+15)])
-                                    self.domino.field.append(
-                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y-15)])
-                                else:
-                                    self.domino.field.append(
-                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y)])
-                                    self.domino.field.append(
-                                        [self.marked_piece[1], (self.right_controller.x+30, self.right_controller.y)])
-                            if self.right_controller.direction == 'down':
-                                if self.marked_piece[0] == self.marked_piece[1]:
-                                    self.domino.field.append(
-                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y)])
-                                    self.domino.field.append(
-                                        [self.marked_piece[1], (self.right_controller.x+30, self.right_controller.y)])
-                                else:
-                                    self.domino.field.append(
-                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y+15)])
-                                    self.domino.field.append(
-                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y-15)])
                         else:
+                            connect_piece = self.marked_piece[1]
+                            border_piece = self.marked_piece[0]
                             self.right_controller.edge = self.marked_piece[0]
+
+                        # Por a peça no campo verificando se é carroça
+                        if self.marked_piece[0] == self.marked_piece[1]:
+                            # Verifica a direção
                             if self.right_controller.direction == 'right':
-                                if self.marked_piece[0] == self.marked_piece[1]:
-                                    self.domino.field.append(
-                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y+15)])
-                                    self.domino.field.append(
-                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y-15)])
-                                else:
-                                    self.domino.field.append(
-                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y)])
-                                    self.domino.field.append(
-                                        [self.marked_piece[0], (self.right_controller.x+30, self.right_controller.y)])
+                                self.domino.field.append(
+                                    [connect_piece, (self.right_controller.x, self.right_controller.y+15)])
+                                self.domino.field.append(
+                                    [border_piece, (self.right_controller.x, self.right_controller.y-15)])
                             if self.right_controller.direction == 'down':
-                                if self.marked_piece[0] == self.marked_piece[1]:
-                                    self.domino.field.append(
-                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y)])
-                                    self.domino.field.append(
-                                        [self.marked_piece[1], (self.right_controller.x+30, self.right_controller.y)])
-                                else:
-                                    self.domino.field.append(
-                                        [self.marked_piece[0], (self.right_controller.x, self.right_controller.y+15)])
-                                    self.domino.field.append(
-                                        [self.marked_piece[1], (self.right_controller.x, self.right_controller.y-15)])
+                                self.domino.field.append(
+                                    [connect_piece, (self.right_controller.x+15, self.right_controller.y)])
+                                self.domino.field.append(
+                                    [border_piece, (self.right_controller.x-15, self.right_controller.y)])
+                        else:
+                            # Verifica a direção
+                            if self.right_controller.direction == 'right':
+                                self.domino.field.append(
+                                    [connect_piece, (self.right_controller.x, self.right_controller.y)])
+                                self.domino.field.append(
+                                    [border_piece, (self.right_controller.x+30, self.right_controller.y)])
+                            if self.right_controller.direction == 'down':
+                                self.domino.field.append(
+                                    [connect_piece, (self.right_controller.x, self.right_controller.y)])
+                                self.domino.field.append(
+                                    [border_piece, (self.right_controller.x, self.right_controller.y+30)])
 
                         # Ajusta a nova posição
                         if self.marked_piece[0] == self.marked_piece[1]:
@@ -395,31 +381,42 @@ class Game:
 
                     # Verifica se a peça foi colocada na esquerda
                     elif self.left_controller.rect.collidepoint(self.mouse):
-                        # Por a peça no campo
+                        print(self.left_controller.direction)
+                        # Pegar peça de encaixe e nova borda
                         if self.marked_piece[0] == self.left_controller.edge:
+                            connect_piece = self.marked_piece[0]
+                            border_piece = self.marked_piece[1]
                             self.left_controller.edge = self.marked_piece[1]
-                            if self.marked_piece[0] == self.marked_piece[1]:
-                                self.domino.field.append(
-                                    [self.marked_piece[0], (self.left_controller.x, self.left_controller.y+15)])
-                                self.domino.field.append(
-                                    [self.marked_piece[1], (self.left_controller.x, self.left_controller.y-15)])
-                            else:
-                                self.domino.field.append(
-                                    [self.marked_piece[0], (self.left_controller.x, self.left_controller.y)])
-                                self.domino.field.append(
-                                    [self.marked_piece[1], (self.left_controller.x-30, self.left_controller.y)])
                         else:
+                            connect_piece = self.marked_piece[1]
+                            border_piece = self.marked_piece[0]
                             self.left_controller.edge = self.marked_piece[0]
-                            if self.marked_piece[0] == self.marked_piece[1]:
+
+                        # Por a peça no campo verificando se é carroça
+                        if self.marked_piece[0] == self.marked_piece[1]:
+                            # Verifica a direção
+                            if self.left_controller.direction == 'left':
                                 self.domino.field.append(
-                                    [self.marked_piece[1], (self.left_controller.x, self.left_controller.y+15)])
+                                    [connect_piece, (self.left_controller.x, self.left_controller.y+15)])
                                 self.domino.field.append(
-                                    [self.marked_piece[0], (self.left_controller.x, self.left_controller.y-15)])
-                            else:
+                                    [border_piece, (self.left_controller.x, self.left_controller.y-15)])
+                            if self.left_controller.direction == 'up':
                                 self.domino.field.append(
-                                    [self.marked_piece[1], (self.left_controller.x, self.left_controller.y)])
+                                    [connect_piece, (self.left_controller.x+15, self.left_controller.y)])
                                 self.domino.field.append(
-                                    [self.marked_piece[0], (self.left_controller.x-30, self.left_controller.y)])
+                                    [border_piece, (self.left_controller.x-15, self.left_controller.y)])
+                        else:
+                            if self.left_controller.direction == 'left':
+                                self.domino.field.append(
+                                    [connect_piece, (self.left_controller.x, self.left_controller.y)])
+                                self.domino.field.append(
+                                    [border_piece, (self.left_controller.x-30, self.left_controller.y)])
+                            if self.left_controller.direction == 'up':
+                                self.domino.field.append(
+                                    [connect_piece, (self.left_controller.x, self.left_controller.y+30)])
+                                self.domino.field.append(
+                                    [border_piece, (self.left_controller.x, self.left_controller.y)])
+
                         # Ajusta a nova posição
                         if self.marked_piece[0] == self.marked_piece[1]:
                             self.left_controller.ajust(
