@@ -1,4 +1,7 @@
-# Ajustar a jogada da máquina pra alinhar nas direções ajustadas
+# Ajustar o next round para quem ganhou começar
+# Identificar e corrigir o bug do random jogar mais de uma vez as vezes
+# Ajustar a jogada da máquina pra alinhar nas direções
+# Comentar e melhorar o código da tela splash
 # Ajustar resolução da terceira tela
 # Ajustar para jogar com outros oponentes além do Random
 # Salvar os jogos em json

@@ -1,3 +1,4 @@
+from pygame.constants import WINDOWHIDDEN
 from domino import Domino
 from player import Player
 from computer import H1
@@ -25,6 +26,7 @@ class Game:
         # Salvando a font que será usada
         self.min_font = pg.font.Font(pg.font.get_default_font(), 10)
         self.font = pg.font.Font(pg.font.get_default_font(), 20)
+        self.max_font = pg.font.Font(pg.font.get_default_font(), 30)
 
         # Salvando as cores que serão utilizadas
         self.black = (0, 0, 0)
@@ -114,8 +116,8 @@ class Game:
 
         # Desenhando "Resto"
         self.screen.blit(self.font.render(
-            str(len(self.domino.rest)), True, self.white), ((x*0.9)+5, (y*0.9)+5))
-        self.rest = pg.Rect((x*0.9), (y*0.9), 35, 30)
+            '+', True, self.white), ((x*0.9)+7, (y*0.9)+2))
+        self.rest = pg.Rect((x*0.9), (y*0.9), 25, 25)
         pg.draw.rect(self.screen, self.white, self.rest, 2)
 
         # Posição de referência
@@ -133,7 +135,7 @@ class Game:
         # Mostrando botão de configuração
         if self.show_resolutions:
             self.screen.blit(self.font.render(
-                "-", True, self.white), (x+10, y+10))
+                "_", True, self.white), (x+10, y-5))
             pg.draw.rect(self.screen, self.white, self.conf, 2)
             for res in self.resolutions:
                 pg.draw.rect(self.screen, res.color, res.rect, 2)
@@ -152,7 +154,11 @@ class Game:
 
         else:
             self.screen.blit(self.font.render(
-                "*", True, self.white), (x+10, y+10))
+                "_", True, self.white), (x+9, y-10))
+            self.screen.blit(self.font.render(
+                "_", True, self.white), (x+9, y-5))
+            self.screen.blit(self.font.render(
+                "_", True, self.white), (x+9, y))
             pg.draw.rect(self.screen, self.white, self.conf, 2)
 
     def load_field(self):
@@ -162,6 +168,64 @@ class Game:
             position = piece_position[1]
             self.screen.blit(
                 image, (position[0]+self.offset[self.index][0], position[1]+self.offset[self.index][1]))
+
+    def splash_screen(self):
+
+        # Preenchendo background
+        self.screen.fill(self.black)
+
+        background_delay = 1500  # Milissegundos
+        background_time = 0     # Ultima mudança do background
+
+        play = Button(200, 300)
+
+        qw = [[30, 160], [160, 320], [320, 480], [480, 610]]
+        qh = [[30, 100], [160, 320], [350, 450]]
+
+        while True:
+
+            # 30 FPS
+            self.clock.tick(10)
+
+            # Armazenando a posição do mouse
+            self.mouse = pg.mouse.get_pos()
+
+            time_now = pg.time.get_ticks()
+            if (time_now > background_time + background_delay):
+                # Mudar o background
+                background_time = time_now
+                self.screen.fill(self.black)
+                for _ in range(10):
+                    w = random.randint(0, 3)
+                    h = random.randint(0, 2)
+                    if (h == 1 and w == 1) or (h == 1 and w == 2):
+                        h = 0
+                        self.screen.blit(self.images.load_piece(random.randint(1, 6)), (random.randint(
+                            qw[w][0], qw[w][1]), (random.randint(qh[h][0], qh[h][1]))))
+                    else:
+                        self.screen.blit(self.images.load_piece(random.randint(1, 6)), (random.randint(
+                            qw[w][0], qw[w][1]), (random.randint(qh[h][0], qh[h][1]))))
+
+            self.screen.blit(self.font.render(
+                "Dominó", True, self.white), (290, 150))
+
+            pg.draw.rect(self.screen, play.color, play.rect)
+            self.screen.blit(self.font.render(
+                'Jogar Agora', True, self.black), play.pos)
+            play.verify(self.mouse)
+            if play.rect.collidepoint(self.mouse):
+                if pg.mouse.get_pressed()[0] == 1:
+                    #self.player2 = button.computer
+                    self.page = 1
+                    return
+
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
+                    exit(0)
+
+            # Atualizando a tela
+            pg.display.update()
 
     # Cria a primeira tela
     def first_screen(self):
@@ -174,8 +238,8 @@ class Game:
         self.first_screen_x = 150
 
         # Desenhando "Escolha o oponente"
-        self.screen.blit(self.font.render("Escolha o oponente", True,
-                         self.white), (self.first_screen_y, self.first_screen_x-50))
+        self.screen.blit(self.font.render("Escolha o nível", True,
+                         self.white), (self.first_screen_y+40, self.first_screen_x-50))
 
         # Criando botões
         self.buttons.append(
@@ -193,11 +257,18 @@ class Game:
             # Armazenando a posição do mouse
             self.mouse = pg.mouse.get_pos()
 
+            self.screen.blit(self.images.load_piece(1), self.buttons[0].pos)
+            self.screen.blit(self.font.render("H1", True,
+                                              self.white), (self.buttons[0].pos[0]+50, self.buttons[0].pos[1]+7))
+            self.screen.blit(self.images.load_piece(2), self.buttons[1].pos)
+            self.screen.blit(self.font.render("H2", True,
+                                              self.white), (self.buttons[1].pos[0]+50, self.buttons[1].pos[1]+7))
+            self.screen.blit(self.images.load_piece(3), self.buttons[2].pos)
+            self.screen.blit(self.font.render("KNN", True,
+                                              self.white), (self.buttons[2].pos[0]+50, self.buttons[2].pos[1]+7))
+
             # Desenhando os botões
             for button in self.buttons:
-                pg.draw.rect(self.screen, button.color, button.rect, 2)
-                self.screen.blit(self.font.render(
-                    button.computer.name, True, button.color), button.pos)
                 button.verify(self.mouse)
                 if button.rect.collidepoint(self.mouse):
                     if pg.mouse.get_pressed()[0] == 1:
@@ -223,48 +294,7 @@ class Game:
         self.second_screen_x = self.width/2
         self.second_screen_y = self.height/2
 
-        # Organizando o inicio do jogo
-        self.domino.set_variables()
-        self.domino.rest = self.player1.distribute(
-            random.sample(self.domino.rest, len(self.domino.rest)))
-        self.domino.rest = self.player2.distribute(
-            random.sample(self.domino.rest, len(self.domino.rest)))
-
-        # Verifica quem inicia
-        piece = self.domino.who_start(self.player1.hand + self.player2.hand)
-
-        # Se o jogador 1 começar
-        if piece in self.player1.hand:
-            self.player1.remove_from_hand(piece)
-            self.my_turn = 2
-
-        # Se o jogador 2 começar
-        else:
-            self.player2.remove_from_hand(piece)
-            self.my_turn = 1
-
-        if piece[0] == piece[1]:
-            # Coloco a peça no meio da tela
-            self.domino.field.append(
-                [piece[0], (self.second_screen_x, self.second_screen_y+15)])
-            self.domino.field.append(
-                [piece[1], (self.second_screen_x, self.second_screen_y-15)])
-            # Salvando os controladores // borda / posição central / top, left, bottom, right
-            self.left_controller = Controller(
-                piece[0], self.second_screen_x-30, self.second_screen_y, 'left')
-            self.right_controller = Controller(
-                piece[1], self.second_screen_x+30, self.second_screen_y, 'right')
-        else:
-            # Coloco a peça no meio da tela
-            self.domino.field.append(
-                [piece[0], (self.second_screen_x, self.second_screen_y)])
-            self.domino.field.append(
-                [piece[1], (self.second_screen_x-30, self.second_screen_y)])
-            # Salvando os controladores // borda / posição central / top, left, bottom, right
-            self.left_controller = Controller(
-                piece[1], self.second_screen_x-60, self.second_screen_y, 'left')
-            self.right_controller = Controller(
-                piece[0], self.second_screen_x+30, self.second_screen_y, 'right')
+        self.start_round(0)
 
         while True:
 
@@ -381,7 +411,6 @@ class Game:
 
                     # Verifica se a peça foi colocada na esquerda
                     elif self.left_controller.rect.collidepoint(self.mouse):
-                        print(self.left_controller.direction)
                         # Pegar peça de encaixe e nova borda
                         if self.marked_piece[0] == self.left_controller.edge:
                             connect_piece = self.marked_piece[0]
@@ -478,7 +507,7 @@ class Game:
                                     self.offset[self.index])
                             # Retirar peça da mão
                             self.marked_piece = []
-                            self.my_turn = 1 
+                            self.my_turn = 1
 
                     elif position == 'Left':
                         # Por a peça no campo
@@ -527,13 +556,9 @@ class Game:
 
             # Verifica vencedor
             if len(self.player1.hand) == 0:
-                self.result = "Venceu"
-                self.page = 3
-                return
+                self.start_round(1)
             if len(self.player2.hand) == 0:
-                self.result = "Perdeu"
-                self.page = 3
-                return
+                self.start_round(2)
 
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -587,6 +612,58 @@ class Game:
 
             # Atualizando a tela
             pg.display.update()
+
+    def start_round(self, winner):
+        self.domino.set_variables()
+        if winner == 1:
+            self.player2.number += 1
+
+        if winner == 2:
+            self.player1.number += 1
+
+        # Organizando o inicio do jogo
+        self.domino.rest = self.player1.distribute(
+            random.sample(self.domino.rest, len(self.domino.rest)))
+        self.domino.rest = self.player2.distribute(
+            random.sample(self.domino.rest, len(self.domino.rest)))
+
+        # Verifica quem inicia
+        piece = self.domino.who_start(self.player1.hand + self.player2.hand)
+
+        # Se o jogador 1 começar
+        if piece in self.player1.hand:
+            self.player1.remove_from_hand(piece)
+            self.my_turn = 2
+
+        # Se o jogador 2 começar
+        else:
+            self.player2.remove_from_hand(piece)
+            self.my_turn = 1
+
+        if piece[0] == piece[1]:
+            # Coloco a peça no meio da tela
+            self.domino.field.append(
+                [piece[0], (self.second_screen_x, self.second_screen_y+15)])
+            self.domino.field.append(
+                [piece[1], (self.second_screen_x, self.second_screen_y-15)])
+            # Salvando os controladores // borda / posição central / top, left, bottom, right
+            self.left_controller = Controller(
+                piece[0], self.second_screen_x-30, self.second_screen_y, 'left')
+            self.right_controller = Controller(
+                piece[1], self.second_screen_x+30, self.second_screen_y, 'right')
+        else:
+            # Coloco a peça no meio da tela
+            self.domino.field.append(
+                [piece[0], (self.second_screen_x, self.second_screen_y)])
+            self.domino.field.append(
+                [piece[1], (self.second_screen_x-30, self.second_screen_y)])
+            # Salvando os controladores // borda / posição central / top, left, bottom, right
+            self.left_controller = Controller(
+                piece[1], self.second_screen_x-60, self.second_screen_y, 'left')
+            self.right_controller = Controller(
+                piece[0], self.second_screen_x+30, self.second_screen_y, 'right')
+
+        self.marked_piece = []
 
     def reset(self):
         self.domino = Domino()
