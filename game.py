@@ -4,6 +4,7 @@ from player import Player
 from computer import H1
 from computer import H2
 from computer import KNN
+from minimax import Minimax
 import pygame as pg
 from widgets import Button, Controller, Images, Option, Piece
 import random
@@ -16,12 +17,14 @@ class Game:
         self.images = Images()
         self.player1 = Player()
         self.player2 = Player()
+        self.h3 = Minimax()
         self.clock = pg.time.Clock()
         self.page = 1
         self.result = "Venceu"
         self.conf = pg.Rect(575, 30, 20, 20)
         self.show_resolutions = False
         self.resolutions = []
+        self.aux_field = []
 
         # Salvando a font que será usada
         self.min_font = pg.font.Font(pg.font.get_default_font(), 10)
@@ -457,6 +460,9 @@ class Game:
                                 False)
                             self.left_controller.update_rect(
                                 self.offset[self.index])
+
+                        self.aux_field.append(self.marked_piece)
+                        
                         # Retirar peça da mão
                         self.marked_piece = []
                         self.my_turn = 2
@@ -465,8 +471,9 @@ class Game:
             elif self.my_turn == 2:
                 # Se a máquina puder jogar
                 if self.player2.can_play(self.left_controller.edge, self.right_controller.edge):
-                    (self.marked_piece, position) = self.player2.select_piece_to_play(
-                        self.left_controller.edge, self.right_controller.edge)
+                    # Descomentar para usar o Minimax
+                    #(self.marked_piece, position) = self.h3.minimax(self.aux_field, self.player2.hand, len(self.player1.hand), self.left_controller.edge, self.right_controller.edge)
+                    (self.marked_piece, position) = self.player2.select_piece_to_play(self.left_controller.edge, self.right_controller.edge)
                     self.player2.remove_from_hand(self.marked_piece)
                     if position == 'Right':
                         if self.marked_piece[0] == self.right_controller.edge:
@@ -546,6 +553,9 @@ class Game:
                                 False)
                             self.left_controller.update_rect(
                                 self.offset[self.index])
+                        
+                        self.aux_field.append(self.marked_piece)
+
                         # Retirar peça da mão
                         self.marked_piece = []
                         self.my_turn = 1
@@ -553,6 +563,7 @@ class Game:
                 # Se não, adiciona uma peça do resto
                 else:
                     self.player2.add_to_hand(self.domino.rest.pop())
+                    pass
 
             # Verifica vencedor
             if len(self.player1.hand) == 0:
@@ -646,6 +657,9 @@ class Game:
                 [piece[0], (self.second_screen_x, self.second_screen_y+15)])
             self.domino.field.append(
                 [piece[1], (self.second_screen_x, self.second_screen_y-15)])
+
+            self.aux_field.append(piece)
+
             # Salvando os controladores // borda / posição central / top, left, bottom, right
             self.left_controller = Controller(
                 piece[0], self.second_screen_x-30, self.second_screen_y, 'left')
@@ -657,6 +671,9 @@ class Game:
                 [piece[0], (self.second_screen_x, self.second_screen_y)])
             self.domino.field.append(
                 [piece[1], (self.second_screen_x-30, self.second_screen_y)])
+
+            self.aux_field.append(piece)
+
             # Salvando os controladores // borda / posição central / top, left, bottom, right
             self.left_controller = Controller(
                 piece[1], self.second_screen_x-60, self.second_screen_y, 'left')
@@ -673,3 +690,4 @@ class Game:
         self.result = "Venceu"
         self.show_resolutions = False
         self.marked_piece = []
+        self.aux_field = []

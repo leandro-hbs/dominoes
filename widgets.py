@@ -104,6 +104,7 @@ class Controller:
                 if self.x - 30 > 0:
                     self.x -= 30
                 else:
+                    self.y -= 45
                     self.direction = 'up'
 
             if self.direction == 'up':
@@ -128,6 +129,7 @@ class Controller:
                     self.x -= 60
                 else:
                     self.x -= 30
+                    self.y -= 30
                     self.direction = 'up'
 
             if self.direction == 'up':
